@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.16)
-project(MTBE LANGUAGES CXX)
+project(TABE LANGUAGES CXX)
 
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
@@ -24,7 +24,7 @@ link_directories(
 )
 
 # --------- Executable ----------
-add_executable(MTBE
+add_executable(TABE
         main.cpp
         setup.cpp
         keygen.cpp
@@ -33,7 +33,7 @@ add_executable(MTBE
 )
 
 # --------- Link libraries ----------
-target_link_libraries(MTBE
+target_link_libraries(TABE
         pbc
         gmp
 )

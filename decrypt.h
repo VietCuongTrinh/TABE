@@ -5,9 +5,12 @@
 #include "encrypt.h"
 #include "keygen.h"
 
-void decrypt(element_t Ki,
-             PublicParams &pp,
-             Ciphertext &ct,
-             SecretKey &sk);
+bool Decrypt(
+    PublicParams &param,
+    SecretKey &sk,
+    Ciphertext &ct,
+    vector<int> user_attr,
+    element_t &K
+);
 
 #endif

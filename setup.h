@@ -6,15 +6,31 @@
 struct PublicParams {
     pairing_t pairing;
     element_t g;
-    element_t g_tilde;
+    element_t ge;
     element_t g_alpha;
-    element_t egg_P0;
+
+    vector<element_t> ge_alpha_powers;
+    vector<element_t> e_g_ge_P0;
+
+    vector<int> attributes;
 };
 
 struct MasterKey {
     element_t alpha;
 };
 
-void setup(PublicParams &pp, MasterKey &msk);
+struct SecretKey {
+    map<int, element_t> D;  
+};
+
+struct Ciphertext {
+    element_t C1;
+    element_t C2;
+
+    vector<vector<int>> S;
+    vector<int> threshold;
+};
+
+void Setup(PublicParams &pp, MasterKey &msk);
 
 #endif

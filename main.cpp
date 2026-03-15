@@ -1,31 +1,32 @@
 #include <iostream>
+#include <vector>
 #include "setup.h"
-#include "keygen.h"
-#include "encrypt.h"
-#include "decrypt.h"
+
+using namespace std;
 
 int main() {
-    PublicParams pp;
+    PublicParams param;
     MasterKey msk;
-    setup(pp, msk);
-
-    SecretKey alice;
-    keygen(alice, pp, msk, "alice");
-
-    std::vector<std::string> S = {"alice"};
-
+    int n = 5;
+    int m = 2; 
+    Setup(param, msk, n, m);
+    vector<int> user_attributes = {1,2,3};
+    SecretKey sk;
+    KeyGen(param, msk, user_attributes, sk);
+    vector<vector<int>> S;
+    S.push_back({1,2,4});
+    S.push_back({3,5,6});
+    vector<int> threshold = {2,2};
     Ciphertext ct;
+    Encrypt(param, S, threshold, ct);
     element_t K;
-    encrypt(ct, pp, S, K);
-
-    element_t Ki;
-    decrypt(Ki, pp, ct, alice);
-
-    std::cout << "Session key:\n";
-    element_printf("%B\n", K);
-
-    std::cout << "Partial decrypt:\n";
-    element_printf("%B\n", Ki);
-
+    bool ok = Decrypt(param, sk, ct, user_attributes, K);
+    if(ok){
+        cout << "Decryption success" << endl;
+        element_printf("Session key: %B\n", K);
+    }
+    else{
+        cout << "Decryption failed (threshold not satisfied)" << endl;
+    }
     return 0;
 }

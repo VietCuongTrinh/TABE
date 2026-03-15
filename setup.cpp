@@ -1,29 +1,37 @@
 #include "setup.h"
 
-void setup(PublicParams &pp, MasterKey &msk) {
-    char param_str[] =
-        "type a\n"
-        "q 87807107996633125224377819847540498158068831994142082\n"
-        "h 12016012264891146079388821366740534204802954401251311\n"
-        "r 730750818665451621361119245571504901405976559617\n"
-        "exp2 159\n"
-        "exp1 107\n"
-        "sign1 1\n"
-        "sign0 1\n";
+void Setup(PublicParams &param, MasterKey &msk, int n, int m) {
 
-    pairing_init_set_str(pp.pairing, param_str);
+    pbc_param_t pbc_param;
+    pbc_param_init_a_gen(pbc_param, 160, 512);
 
-    element_init_G1(pp.g, pp.pairing);
-    element_init_G2(pp.g_tilde, pp.pairing);
-    element_init_G1(pp.g_alpha, pp.pairing);
-    element_init_GT(pp.egg_P0, pp.pairing);
+    pairing_init_pbc_param(param.pairing, pbc_param);
 
-    element_init_Zr(msk.alpha, pp.pairing);
+    element_init_G1(param.g, param.pairing);
+    element_init_G2(param.ge, param.pairing);
+    element_init_Zr(msk.alpha, param.pairing);
 
-    element_random(pp.g);
-    element_random(pp.g_tilde);
+    element_random(param.g);
+    element_random(param.ge);
     element_random(msk.alpha);
 
-    element_pow_zn(pp.g_alpha, pp.g, msk.alpha);
-    element_pairing(pp.egg_P0, pp.g, pp.g_tilde);
+    element_init_G1(param.g_alpha, param.pairing);
+    element_pow_zn(param.g_alpha, param.g, msk.alpha);
+
+    param.ge_alpha_powers.resize(2*n*m+1);
+
+    for(int i=0;i<=2*n*m;i++){
+        element_init_G2(param.ge_alpha_powers[i], param.pairing);
+    }
+
+    element_t tmp;
+    element_init_Zr(tmp, param.pairing);
+    element_set1(tmp);
+
+    for(int i=0;i<=2*n*m;i++){
+
+        element_pow_zn(param.ge_alpha_powers[i], param.ge, tmp);
+        element_mul(tmp,tmp,msk.alpha);
+    }
+
 }
